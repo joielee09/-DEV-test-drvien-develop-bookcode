@@ -6,7 +6,6 @@
 // ✅tiems(int) 스텁 매서드가 없음 -> 스텁: 간단하게 입출력만 만들어 컴파일 되도록 하는 것
 // ✅amount 필드가 없음
 
-
 class Dollar {
   constructor(amount){
     this.amount = amount;
@@ -17,12 +16,15 @@ class Dollar {
 }
 
 describe('TDD book test', () => {
+
   let product;
   const five = new Dollar(5);
+
   it('test multiplication', () => {
     product = five.times(2);
     expect(product.amount).toBe(10);
     product = five.times(3);
     expect(product.amount).toBe(15);
   })
+
 })
