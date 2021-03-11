@@ -1,13 +1,13 @@
-function test() {
-  return 'Hello, world!';
-}
-
-const times = (amount, multiplier) => {
-  return amount*multiplier;
+class Dollar {
+  constructor(){}
+  times(amount, multiplier) {
+    return (amount*multiplier);
+  }
 }
 
 describe('TDD book test', () => {
+  let dollar = new Dollar();
   it('test1', () => {
-    expect(times(2,5)).toBe(10);
+    expect(dollar.times(2,5)).toBe(10);
   })
 })
