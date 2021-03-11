@@ -16,13 +16,17 @@ class Dollar {
   }
 }
 
+
 describe('TDD book test', () => {
+
   let product;
   const five = new Dollar(5);
+
   it('test multiplication', () => {
     product = five.times(2);
     expect(product.amount).toBe(10);
     product = five.times(3);
     expect(product.amount).toBe(15);
   })
+
 })
