@@ -14,19 +14,22 @@ class Dollar {
   times(multiplier){
     return new Dollar (this.amount*multiplier);
   }
+  equals(object) {
+    const dollar = object;
+    return this.amount === dollar.amount ;
+  }
 }
 
 
 describe('TDD book test', () => {
-
-  let product;
   const five = new Dollar(5);
-
   it('test multiplication', () => {
-    product = five.times(2);
-    expect(product.amount).toBe(10);
-    product = five.times(3);
-    expect(product.amount).toBe(15);
+    expect(new Dollar(10)).toEqual(five.times(2));
+    expect(new Dollar(15)).toEqual(five.times(3));
   })
-
+  // true 인 경우와 false 인경우를 모두 test한다.
+  it ('test equality', () => {
+    expect(new Dollar(5).equals(new Dollar(5))).toBe(true);
+    expect(new Dollar(5).equals(new Dollar(6))).toBe(false);
+  })
 })
