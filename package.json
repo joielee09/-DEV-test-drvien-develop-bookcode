@@ -12,7 +12,7 @@
     "tdd",
     "bdd"
   ],
-  "author": "Seungmin Lee",
+  "author": "JaeYoung LEE",
   "license": "ISC",
   "devDependencies": {
     "@types/jest": "^26.0.20",

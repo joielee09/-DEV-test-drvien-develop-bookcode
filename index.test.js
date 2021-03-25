@@ -7,22 +7,61 @@
 // ✅amount 필드가 없음
 
 
-class Dollar {
-  constructor(amount){
-    this.amount = amount;
+class Money{
+  constructor(amount) {
+    this.amount = amount
   }
   times(multiplier){
-    return new Dollar (this.amount*multiplier);
+    return new Money (this.amount*multiplier);
+  }
+  equals(object) {
+    const money = object;
+    return this.amount === money.amount;
   }
 }
+class Dollar extends Money{
+  // constructor(amount){
+  //   this.amount = amount;
+  // }
+  // times(multiplier){
+  //   return new Dollar (this.amount*multiplier);
+  // }
+  // equals(object) {
+  //   const dollar = object;
+  //   return this.amount === dollar.amount ;
+  // }
+}
+
+class Franc extends Money{
+  // constructor(amount){
+  //   this.amount = amount;
+  // }
+  // times(multiplier){
+  //   return new France (this.amount*multiplier);
+  // }
+  // equals(object) {
+  //   const franc = object;
+  //   return this.amount === franc.amount ;
+  // }
+}
+
 
 describe('TDD book test', () => {
-  let product;
   const five = new Dollar(5);
-  it('test multiplication', () => {
-    product = five.times(2);
-    expect(product.amount).toBe(10);
-    product = five.times(3);
-    expect(product.amount).toBe(15);
+  it('testMultiplication', () => {
+    expect(new Dollar(10)).toEqual(five.times(2));
+    expect(new Dollar(15)).toEqual(five.times(3));
   })
+  it('testFranceMultiplication', () => {
+    expect(new Dollar(10)).toEqual(five.times(2));
+    expect(new Dollar(15)).toEqual(five.times(3));
+  })
+  // true 인 경우와 false 인경우를 모두 test한다.
+  it ('testEquality', () => {
+    expect(new Dollar(5).equals(new Dollar(5))).toBe(true);
+    expect(new Dollar(5).equals(new Dollar(6))).toBe(false);
+    expect(new Franc(5).equals(new Franc(5))).toBe(true);
+    expect(new Franc(5).equals(new Franc(6))).toBe(false);
+  })
+  
 })
