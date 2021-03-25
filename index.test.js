@@ -20,16 +20,33 @@ class Dollar {
   }
 }
 
+class Franc {
+  constructor(amount){
+    this.amount = amount;
+  }
+  times(multiplier){
+    return new France (this.amount*multiplier);
+  }
+  equals(object) {
+    const franc = object;
+    return this.amount === franc.amount ;
+  }
+}
+
 
 describe('TDD book test', () => {
   const five = new Dollar(5);
-  it('test multiplication', () => {
+  it('testMultiplication', () => {
     expect(new Dollar(10)).toEqual(five.times(2));
     expect(new Dollar(15)).toEqual(five.times(3));
   })
   // true 인 경우와 false 인경우를 모두 test한다.
-  it ('test equality', () => {
+  it ('testEquality', () => {
     expect(new Dollar(5).equals(new Dollar(5))).toBe(true);
     expect(new Dollar(5).equals(new Dollar(6))).toBe(false);
+  })
+  it('testFranceMultiplication', () => {
+    expect(new Dollar(10)).toEqual(five.times(2));
+    expect(new Dollar(15)).toEqual(five.times(3));
   })
 })
