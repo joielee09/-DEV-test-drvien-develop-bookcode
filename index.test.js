@@ -6,62 +6,67 @@
 // ✅tiems(int) 스텁 매서드가 없음 -> 스텁: 간단하게 입출력만 만들어 컴파일 되도록 하는 것
 // ✅amount 필드가 없음
 
+// protected private
+class Money {
+  constructor(amount, currency) {
+    this._amount = amount; // private member convention. 실제로 제한되지 않음
+    this._currency = currency;
+  }
 
-class Money{
-  constructor(amount) {
-    this.amount = amount
+  static dollar(amount) {
+    return new Dollar(amount, 'USD');
   }
-  times(multiplier){
-    return new Money (this.amount*multiplier);
+
+  static franc(amount) {
+    return new Franc(amount, 'CHF');
   }
+
+  times(multiplier) {
+    if (this instanceof Dollar) {
+      return new Dollar(this._amount * multiplier, 'USD');
+    }
+    if (this instanceof Franc) {
+      return new Franc(this._amount * multiplier, 'CHF');
+    }
+    return null;
+  }
+
   equals(object) {
-    const money = object;
-    return this.amount === money.amount;
+    return this._amount === object._amount && this instanceof Dollar === object instanceof Dollar;
+  }
+
+  currency() {
+    return this._currency;
   }
 }
-class Dollar extends Money{
-  // constructor(amount){
-  //   this.amount = amount;
-  // }
-  // times(multiplier){
-  //   return new Dollar (this.amount*multiplier);
-  // }
-  // equals(object) {
-  //   const dollar = object;
-  //   return this.amount === dollar.amount ;
-  // }
+
+class Dollar extends Money {
 }
 
-class Franc extends Money{
-  // constructor(amount){
-  //   this.amount = amount;
-  // }
-  // times(multiplier){
-  //   return new France (this.amount*multiplier);
-  // }
-  // equals(object) {
-  //   const franc = object;
-  //   return this.amount === franc.amount ;
-  // }
+class Franc extends Money {
 }
 
+test('Test multiplication', () => {
+  const five = Money.dollar(5);
+  expect(five.times(2)).toEqual(Money.dollar(10));
+  expect(five.times(3)).toEqual(Money.dollar(15));
+});
 
-describe('TDD book test', () => {
-  const five = new Dollar(5);
-  it('testMultiplication', () => {
-    expect(new Dollar(10)).toEqual(five.times(2));
-    expect(new Dollar(15)).toEqual(five.times(3));
-  })
-  it('testFranceMultiplication', () => {
-    expect(new Dollar(10)).toEqual(five.times(2));
-    expect(new Dollar(15)).toEqual(five.times(3));
-  })
-  // true 인 경우와 false 인경우를 모두 test한다.
-  it ('testEquality', () => {
-    expect(new Dollar(5).equals(new Dollar(5))).toBe(true);
-    expect(new Dollar(5).equals(new Dollar(6))).toBe(false);
-    expect(new Franc(5).equals(new Franc(5))).toBe(true);
-    expect(new Franc(5).equals(new Franc(6))).toBe(false);
-  })
-  
-})
+test('Test franc multiplication', () => {
+  const five = Money.franc(5);
+  expect(five.times(2)).toEqual(Money.franc(10));
+  expect(five.times(3)).toEqual(Money.franc(15));
+});
+
+test('Test equality', () => {
+  expect(Money.dollar(5).equals(Money.dollar(5))).toBe(true);
+  expect(Money.dollar(5).equals(Money.dollar(6))).toBe(false);
+  expect(Money.franc(5).equals(Money.franc(5))).toBe(true);
+  expect(Money.franc(5).equals(Money.franc(6))).toBe(false);
+  expect(Money.franc(5).equals(Money.dollar(5))).toBe(false);
+});
+
+test('TestCurrency', () => {
+  expect(Money.dollar(1).currency()).toBe('USD');
+  expect(Money.franc(1).currency()).toBe('CHF');
+});
