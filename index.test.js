@@ -51,7 +51,7 @@ class Expression {
 
 }
 
-export class Sum extends Expression {
+class Sum extends Expression {
   constructor(augend, addend) {
     super();
     this.augend = augend;
@@ -64,11 +64,15 @@ export class Sum extends Expression {
   }
 
   plus(addend) {
-    return null;
+    return new Sum(this, addend);
+  }
+
+  times(multiplier) {
+    return new Sum(this.augend.times(multiplier), this.addend.times(multiplier));
   }
 }
 
-export class Bank {
+class Bank {
   constructor() {
     this._rates = [];
   }
@@ -97,17 +101,6 @@ export class Bank {
 }
 
 
-class Dollar extends Money {
-}
-
-class Franc extends Money {
-}
-
-class Bank {
-  reduce(source, to) {
-    return Money.dollar(10);
-  }
-}
 
 test('Test simple addition', () => {
   const five = Money.dollar(5);
@@ -175,4 +168,24 @@ test('Test mixed addition', () => {
   const result = bank.reduce(fiveBucks.plus(tenFrancs), 'USD');
 
   expect(result).toEqual(Money.dollar(10));
+});
+
+test('Test sum plus', () => {
+  const fiveBucks = Money.dollar(5);
+  const tenFrancs = Money.franc(10);
+  const bank = new Bank();
+  bank.addRate('CHF', 'USD', 2);
+  const sum = new Sum(fiveBucks, tenFrancs).plus(fiveBucks);
+  const result = bank.reduce(sum, 'USD');
+  expect(result).toEqual(Money.dollar(15));
+});
+
+test('Test sum times', () => {
+  const fiveBucks = Money.dollar(5);
+  const tenFrancs = Money.franc(10);
+  const bank = new Bank();
+  bank.addRate('CHF', 'USD', 2);
+  const sum = new Sum(fiveBucks, tenFrancs).times(2);
+  const result = bank.reduce(sum, 'USD');
+  expect(result).toEqual(Money.dollar(20));
 });
