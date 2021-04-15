@@ -21,8 +21,8 @@ class Money {
     return new Money(amount, 'CHF');
   }
 
-  plus(append) {
-    return new Money(this._amount + AudioDestinationNode._amount, this._currency);
+  plus(addend) {
+    return new Sum(this, addend);
   }
 
   times(multiplier) {
@@ -36,7 +36,66 @@ class Money {
   currency() {
     return this._currency;
   }
+
+  reduce(bank, to) {
+    if (this._currency === to) {
+      return this;
+    }
+
+    const rate = bank.rate(this._currency, to);
+    return new Money(this._amount / rate, to);
+  }
 }
+
+class Expression {
+
+}
+
+export class Sum extends Expression {
+  constructor(augend, addend) {
+    super();
+    this.augend = augend;
+    this.addend = addend;
+  }
+
+  reduce(bank, to) {
+    const amount = this.augend.reduce(bank, to)._amount + this.addend.reduce(bank, to)._amount;
+    return new Money(amount, to);
+  }
+
+  plus(addend) {
+    return null;
+  }
+}
+
+export class Bank {
+  constructor() {
+    this._rates = [];
+  }
+
+  reduce(source, to) {
+    return source.reduce(this, to);
+  }
+
+  addRate(from, to, rate) {
+    this._rates.push({
+      from,
+      to,
+      rate,
+    });
+  }
+
+  rate(from, to) {
+    let targetRate;
+    this._rates.forEach((element) => {
+      if (element.from === from && element.to === to) {
+        targetRate = element.rate;
+      }
+    });
+    return targetRate;
+  }
+}
+
 
 class Dollar extends Money {
 }
@@ -49,6 +108,28 @@ class Bank {
     return Money.dollar(10);
   }
 }
+
+test('Test simple addition', () => {
+  const five = Money.dollar(5);
+  const sum = five.plus(five);
+  const bank = new Bank();
+  const reduced = bank.reduce(sum, 'USD');
+  expect(reduced).toEqual(Money.dollar(10));
+});
+
+test('Test reduce sum', () => {
+  const sum = new Sum(Money.dollar(3), Money.dollar(4));
+  const bank = new Bank();
+  const result = bank.reduce(sum, 'USD');
+  expect(result).toEqual(Money.dollar(7));
+})
+
+test('Test plus returns sum', () => {
+  const five = Money.dollar(5);
+  const sum = five.plus(five);
+  expect(five).toEqual(sum.augend);
+  expect(five).toEqual(sum.addend);
+});
 
 test('Test multiplication', () => {
   const five = Money.dollar(5);
@@ -68,12 +149,30 @@ test('Test equality', () => {
   expect(Money.franc(5).equals(Money.dollar(5))).toBe(false);
 });
 
-test('TestCurrency', () => {
+test('Test currency', () => {
   expect(Money.dollar(1).currency()).toBe('USD');
   expect(Money.franc(1).currency()).toBe('CHF');
 });
 
-test('TestCurrency', () => {
-  expect(Money.dollar(1).currency()).toBe('USD');
-  expect(Money.franc(1).currency()).toBe('CHF');
+test('Test reduce money different currency', () => {
+  const bank = new Bank();
+  bank.addRate('CHF', 'USD', 2);
+  const result = bank.reduce(Money.franc(2), 'USD');
+  expect(result).toEqual(Money.dollar(1));
+});
+
+test('Test reduce same currency', () => {
+  const bank = new Bank();
+  expect(Money.dollar(5).reduce(bank, 'USD')).toEqual(Money.dollar(5));
+})
+
+test('Test mixed addition', () => {
+  const fiveBucks = Money.dollar(5);
+  const tenFrancs = Money.franc(10);
+  const bank = new Bank();
+
+  bank.addRate('CHF', 'USD', 2);
+  const result = bank.reduce(fiveBucks.plus(tenFrancs), 'USD');
+
+  expect(result).toEqual(Money.dollar(10));
 });
