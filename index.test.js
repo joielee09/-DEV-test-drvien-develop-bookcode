@@ -21,6 +21,10 @@ class Money {
     return new Money(amount, 'CHF');
   }
 
+  plus(append) {
+    return new Money(this._amount + AudioDestinationNode._amount, this._currency);
+  }
+
   times(multiplier) {
     return new Money(this._amount * multiplier, this._currency);
   }
@@ -40,6 +44,12 @@ class Dollar extends Money {
 class Franc extends Money {
 }
 
+class Bank {
+  reduce(source, to) {
+    return Money.dollar(10);
+  }
+}
+
 test('Test multiplication', () => {
   const five = Money.dollar(5);
   expect(five.times(2)).toEqual(Money.dollar(10));
@@ -56,6 +66,11 @@ test('Test equality', () => {
   expect(Money.dollar(5).equals(Money.dollar(5))).toBe(true);
   expect(Money.dollar(5).equals(Money.dollar(6))).toBe(false);
   expect(Money.franc(5).equals(Money.dollar(5))).toBe(false);
+});
+
+test('TestCurrency', () => {
+  expect(Money.dollar(1).currency()).toBe('USD');
+  expect(Money.franc(1).currency()).toBe('CHF');
 });
 
 test('TestCurrency', () => {
